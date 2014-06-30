@@ -41,7 +41,6 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.Serializable;
 import java.math.BigInteger;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
@@ -74,8 +73,9 @@ public class InstagramTimelineProvider implements StreamsProvider, Serializable 
         this.config = config;
     }
 
-    protected Iterator<Long[]> idsBatches;
-    protected Iterator<String[]> screenNameBatches;
+    protected List<String> userIds;
+    //protected Iterator<Long[]> idsBatches;
+    //protected Iterator<String[]> screenNameBatches;
 
     protected volatile Queue<StreamsDatum> providerQueue;
 
@@ -123,16 +123,17 @@ public class InstagramTimelineProvider implements StreamsProvider, Serializable 
     public void startStream() {
         LOGGER.debug("{} startStream", STREAMS_ID);
 
-        Preconditions.checkArgument(idsBatches.hasNext() || screenNameBatches.hasNext());
-
-        LOGGER.info("readCurrent");
-
-        while(idsBatches.hasNext())
-            loadBatch(idsBatches.next());
-
-        while(screenNameBatches.hasNext())
-            loadBatch(screenNameBatches.next());
-
+//        Preconditions.checkArgument(idsBatches.hasNext() || screenNameBatches.hasNext());
+//        Preconditions.checkArgument(idsBatches.hasNext());
+//
+//        LOGGER.info("readCurrent");
+//
+//        while(idsBatches.hasNext())
+//            loadBatch(idsBatches.next());
+//
+//        while(screenNameBatches.hasNext())
+//            loadBatch(screenNameBatches.next());
+        Preconditions.checkNotNull(userIds);
         executor.shutdown();
     }
 
@@ -384,7 +385,7 @@ public class InstagramTimelineProvider implements StreamsProvider, Serializable 
         Preconditions.checkNotNull(config.getAccessToken());
 
         //idsCount = config.getFollow().size();
-
+        userIds = config.getUserIds();
         client = getInstagramClient();
     }
 
